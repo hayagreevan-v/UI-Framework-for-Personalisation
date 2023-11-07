@@ -5,19 +5,18 @@ import CssBaseline from '@mui/material/CssBaseline';
 
 import NavBar from '../components/navbar.component.jsx';
 
-const darkTheme = createTheme({
+const Theme = createTheme({
   palette: {
-    mode: 'light',
+    mode: 'dark',
   },
 });
 
 function Home() {
   
   return (
-    <ThemeProvider theme={darkTheme}>
+    <ThemeProvider theme={Theme}>
       <CssBaseline />
       <NavBar></NavBar>
-      <main>This app is using the dark mode</main>
     </ThemeProvider>
   );
 }
