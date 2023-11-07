@@ -3,11 +3,11 @@ import * as React from 'react';
 import { ThemeProvider, createTheme } from '@mui/material/styles';
 import CssBaseline from '@mui/material/CssBaseline';
 
-import NavBar from '../components/navbar.component.jsx';
+import NavBar from '../components/navbar_top.component.jsx';
+import BottomNavBar from '../components/navbar_bottom.component.jsx';
 
 const Theme = createTheme({
   palette: {
-    mode: 'dark',
     primary: {
       light: '#757ce8',
       main: '#3f50b5',
@@ -29,6 +29,7 @@ function Home() {
     <ThemeProvider theme={Theme}>
       <CssBaseline />
       <NavBar></NavBar>
+      <BottomNavBar></BottomNavBar>
     </ThemeProvider>
   );
 }
