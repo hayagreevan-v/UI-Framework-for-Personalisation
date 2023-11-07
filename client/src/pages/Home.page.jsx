@@ -5,6 +5,7 @@ import CssBaseline from '@mui/material/CssBaseline';
 
 import NavBar from '../components/navbar_top.component.jsx';
 import BottomNavBar from '../components/navbar_bottom.component.jsx';
+import ToggleColorMode from '../components/theme_toogle.component.jsx';
 
 const Theme = createTheme({
   palette: {
@@ -29,6 +30,7 @@ function Home() {
     <ThemeProvider theme={Theme}>
       <CssBaseline />
       <NavBar></NavBar>
+      <ToggleColorMode />
       <BottomNavBar></BottomNavBar>
     </ThemeProvider>
   );
