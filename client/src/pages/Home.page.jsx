@@ -1,22 +1,30 @@
 import * as React from 'react';
-
-import { ThemeProvider, createTheme } from '@mui/material/styles';
+import Button from '@mui/material/Button';
+import Card from '@mui/material/Card';
+import CardActions from '@mui/material/CardActions';
+import CardContent from '@mui/material/CardContent';
+import CardMedia from '@mui/material/CardMedia';
 import CssBaseline from '@mui/material/CssBaseline';
-
-import NavBar from '../components/navbar_top.component.jsx';
-import BottomNavBar from '../components/navbar_bottom.component.jsx';
-import Card from '../components/card.component.jsx';
+import Grid from '@mui/material/Grid';
+import Stack from '@mui/material/Stack';
+import Box from '@mui/material/Box';
+import Typography from '@mui/material/Typography';
+import Container from '@mui/material/Container';
+import { ThemeProvider, createTheme } from '@mui/material/styles';
+import NavBar from '../components/navbar_top.component';
+import BottomNavBar from '../components/navbar_bottom.component';
 import axios from 'axios';
-import "../res/home.css";
 
-function Home() {
+const cards = [1, 2, 3, 4, 5];
 
+export default function Home(props) {
+  const [name, setName] = React.useState('');
   const [theme, setTheme] = React.useState(
-      createTheme({
-        palette: {
-          mode: 'light'
-        }
-      })
+    createTheme({
+      palette: {
+        mode: 'light'
+      }
+    })
   );
 
   const getTheme = async () => {
@@ -33,53 +41,88 @@ function Home() {
     });
   }
 
-  function toggleTheme() {
-    setTheme(createTheme({
-      palette: {
-        mode: (theme.palette.mode === 'light') ? 'dark' : 'light'
-      }
-    })
-  )}
-  
+  const getName = async () => {
+    await axios.get('http://localhost:2003/user/get-details', {withCredentials: true}).then((response) => {
+      setName(response.data.name);
+    });
+  }
+
   React.useState(() => {
     getTheme();
+    getName();
   }, []);
-
   return (
     <ThemeProvider theme={theme}>
       <CssBaseline />
-      <NavBar toggleTheme={toggleTheme} curTheme={theme.palette.mode}></NavBar>
-      <div class="header"></div>
-      <div class="row1-container">
-        <Card 
-          class="box box-down cyan"
-          title='Supervisor' 
-          body='Monitors activity to identify project roadblocks' 
-          img='https://assets.codepen.io/2301174/icon-supervisor.svg'
-        />
-        <Card 
-          class="box red"
-          title='Team Builder' 
-          body='Scans our talent network to create the optimal team for your project' 
-          img='https://assets.codepen.io/2301174/icon-team-builder.svg'
-        />
-        <Card 
-          class="box box-down blue"
-          title='Calculator' 
-          body='Uses data from past projects to provide better delivery estimates' 
-          img='https://assets.codepen.io/2301174/icon-calculator.svg'
-        />
-      </div>
-      <div class="row2-container" >
-        <Card 
-          class="box orange"
-          title='Demo' 
-          body='Regularly evaluates our talent to ensure quality' 
-          img='https://assets.codepen.io/2301174/icon-karma.svg'
-        />
-      </div>
+      <NavBar></NavBar>
+      <main>
+        {/* Hero unit */}
+        <Box
+          sx={{
+            bgcolor: 'background.paper',
+            pt: 8,
+            pb: 6,
+          }}
+        >
+          <Container maxWidth="sm">
+            <Typography
+              component="h1"
+              variant="h2"
+              align="center"
+              color="text.primary"
+              gutterBottom
+            >
+              Welcome ! {name}
+            </Typography>
+            <Typography variant="h5" align="center" color="text.secondary" paragraph>
+            I am a passionate photographer who captures the beauty of life through the lens, turning moments into timeless art. My work is a visual storytelling that speaks volumes without words.
+            </Typography>
+            <Stack
+              sx={{ pt: 4 }}
+              direction="row"
+              spacing={2}
+              justifyContent="center"
+            >
+              <Button variant="contained">+ Add Memory</Button>
+              <Button variant="outlined">Recent Memory</Button>
+            </Stack>
+          </Container>
+        </Box>
+        <Container sx={{ py: 8 }} maxWidth="md">
+          {/* End hero unit */}
+          <Grid container spacing={4}>
+            {cards.map((card) => (
+              <Grid item key={card} xs={12} sm={6} md={4}>
+                <Card
+                  sx={{ height: '100%', display: 'flex', flexDirection: 'column' }}
+                >
+                  <CardMedia
+                    component="div"
+                    sx={{
+                      // 16:9
+                      pt: '56.25%',
+                    }}
+                    image="https://source.unsplash.com/random?wallpapers"
+                  />
+                  <CardContent sx={{ flexGrow: 1 }}>
+                    <Typography gutterBottom variant="h5" component="h2">
+                      Memory #{card}
+                    </Typography>
+                    <Typography>
+                      A cherished memory that sparkles in the gallery of my heart.
+                    </Typography>
+                  </CardContent>
+                  <CardActions>
+                    <Button size="small">View</Button>
+                    <Button size="small">Edit</Button>
+                  </CardActions>
+                </Card>
+              </Grid>
+            ))}
+          </Grid>
+        </Container>
+      </main>
       <BottomNavBar></BottomNavBar>
     </ThemeProvider>
   );
 }
-export default Home;

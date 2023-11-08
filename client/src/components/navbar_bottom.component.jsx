@@ -4,7 +4,7 @@ import BottomNavigation from '@mui/material/BottomNavigation';
 import BottomNavigationAction from '@mui/material/BottomNavigationAction';
 import RestoreIcon from '@mui/icons-material/Restore';
 import FavoriteIcon from '@mui/icons-material/Favorite';
-import LocationOnIcon from '@mui/icons-material/LocationOn';
+import SettingsIcon from '@mui/icons-material/Settings';
 
 export default function BottomNavBar() {
   const [value, setValue] = React.useState(0);
@@ -20,7 +20,7 @@ export default function BottomNavBar() {
       >
         <BottomNavigationAction label="Recents" icon={<RestoreIcon />} />
         <BottomNavigationAction label="Favorites" icon={<FavoriteIcon />} />
-        <BottomNavigationAction label="Nearby" icon={<LocationOnIcon />} />
+        <BottomNavigationAction label="Settings" icon={<SettingsIcon />} />
       </BottomNavigation>
     </Box>
   );
