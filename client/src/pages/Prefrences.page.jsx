@@ -18,8 +18,8 @@ function Preference() {
         }
       })
   );
-
-  const getTheme = async () => {
+      const [data,setData]= React.useState();
+  const getTheme = async (index) => {
     var response = await axios.get('http://localhost:2003/preference/all', {withCredentials: true}).then((respon) => {
         // setTheme(
         //   createTheme({
@@ -31,6 +31,7 @@ function Preference() {
         //   })
         // );
         console.log(respon.data[0]);
+        setData(respon.data[index].name);
     });
   }
 
@@ -53,8 +54,9 @@ function Preference() {
       <div class="header"></div>
       <div class="row1-container">
         <Card 
+        gettheme={getTheme(0)}
           class="box box-down cyan"
-          title='Classic' 
+          title={data} 
           body='Monitors activity to identify project roadblocks'
           img={pref1}
           >
