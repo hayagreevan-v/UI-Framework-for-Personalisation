@@ -53,7 +53,6 @@ router.post('/signup', async (req, res) => {
 router.post('/login', async (req, res) => {
     try{
         const user_detail = await user.findOne({ email: req.body.email });
-
         if (user_detail) {
             const valid = await comparePassword(req.body.password, user_detail.password)
 

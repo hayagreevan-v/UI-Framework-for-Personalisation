@@ -11,25 +11,34 @@ import Typography from '@mui/material/Typography';
 import Container from '@mui/material/Container';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import axios from 'axios';
+import { useNavigate } from 'react-router';
 
 const defaultTheme = createTheme();
 
 export default function Login() {
     const [email, setEmail] = React.useState(null);
     const [password, setPassword] = React.useState(null);
-
+    const navigate = useNavigate();
     const handleSubmit = async (event) => {
         event.preventDefault();
-        await axios.post('http://localhost:2003/user/login', {
+        const response = await axios.post('http://localhost:2003/user/login', {
             email: email,
             password: password
-        }, {withCredentials: true})
+        }, {withCredentials: true});
+        
+        if (response.status === 200) {
+            navigate('/home',{state:{email:email}});
+        } else {
+            alert('Invalid email or password');
+        }
+
+
     };
 
     const handleInput = (event) => {
         if (event.target.id === 'email') {
             setEmail(event.target.value);
-        } else if (event.target.value === 'password') {
+        } else if (event.target.id === 'password') {
             setPassword(event.target.value);
         }
     };
@@ -76,7 +85,7 @@ export default function Login() {
                     margin="normal"
                     required
                     fullWidth
-                    label="Password"
+                    label="password"
                     type="password"
                     id="password"
                     onInput={handleInput}

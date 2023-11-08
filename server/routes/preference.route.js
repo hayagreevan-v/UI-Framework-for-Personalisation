@@ -16,10 +16,10 @@ router.post('/', async (req, res) => {
     
 });
 
-router.get("/",/*isLoggedIn, */async (req,res)=>{
+router.get("/",isLoggedIn, async (req,res)=>{
     try{
-    // const user_detail = await user.findOne({email:req.user.email});
-    const userPreference = await preference.findOne({pref_id:3/*user_detail.pref_id*/});
+    const user_detail = await user.findOne({email:req.user.email});
+    const userPreference = await preference.findOne({pref_id: user_detail.pref_id});
     res.status(200).json(userPreference);
     }catch(e){
         console.log(e);
