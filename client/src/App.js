@@ -14,6 +14,7 @@ function App() {
       <Routes>
         <Route path='/' element={ <Login navigate={useNavigate}/> }></Route>
         <Route path='/home' element={ <Home navigate={useNavigate}/> }></Route>
+        <Route path='/home' element={ <Home navigate={useNavigate}/> }></Route>
       </Routes>
     </Router>
   );

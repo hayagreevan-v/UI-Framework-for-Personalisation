@@ -6,6 +6,7 @@ import CssBaseline from '@mui/material/CssBaseline';
 import NavBar from '../components/navbar_top.component.jsx';
 import BottomNavBar from '../components/navbar_bottom.component.jsx';
 import Card from '../components/card.component.jsx';
+import axios from 'axios';
 import "../res/home.css";
 
 // const Theme = createTheme({
@@ -36,6 +37,20 @@ function Home() {
       })
   );
 
+  const getTheme = async () => {
+    await axios.get('http://localhost:2003/preference/', {withCredentials: true}).then((response) => {
+        setTheme(
+          createTheme({
+            palette: {
+              mode: response.data.theme,
+              primary: response.data.color_palette.primary,
+              secondary: response.data.color_palette.secondary
+            }
+          })
+        );
+    });
+  }
+
   function toggleTheme() {
     setTheme(createTheme({
       palette: {
@@ -44,6 +59,10 @@ function Home() {
     })
   )}
   
+  React.useState(() => {
+    getTheme();
+  }, []);
+
   return (
     <ThemeProvider theme={theme}>
       <CssBaseline />
