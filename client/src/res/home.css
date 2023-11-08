@@ -82,16 +82,16 @@ img {
 }
 
 .cyan {
-    border-top: 3px solid var(--cyan);
+    border-top: 3px solid var(--blue);
 }
 .red {
-    border-top: 3px solid var(--red);
+    border-top: 3px solid var(--blue);
 }
 .blue {
     border-top: 3px solid var(--blue);
 }
 .orange {
-    border-top: 3px solid var(--orange);
+    border-top: 3px solid var(--blue);
 }
 
 h2 {
