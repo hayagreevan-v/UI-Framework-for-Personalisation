@@ -20,7 +20,7 @@ export default function Login() {
 
     const handleSubmit = async (event) => {
         event.preventDefault();
-        await axios.post('http://192.168.145.230:2003/user/login', {
+        await axios.post('http://localhost:2003/user/login', {
             email: email,
             password: password
         }, {withCredentials: true})
