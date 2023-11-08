@@ -12,11 +12,13 @@ import Button from '@mui/material/Button';
 import Tooltip from '@mui/material/Tooltip';
 import MenuItem from '@mui/material/MenuItem';
 import AdbIcon from '@mui/icons-material/Adb';
+import Brightness4Icon from '@mui/icons-material/Brightness4';
+import Brightness7Icon from '@mui/icons-material/Brightness7';
 
 const pages = ['Products', 'Pricing', 'Blog'];
 const settings = ['Profile', 'Theme', 'Dashboard', 'Logout'];
 
-function NavBar() {
+function NavBar(props) {
   const [anchorElNav, setAnchorElNav] = React.useState(null);
   const [anchorElUser, setAnchorElUser] = React.useState(null);
 
@@ -31,7 +33,7 @@ function NavBar() {
     setAnchorElNav(null);
   };
 
-  const handleCloseUserMenu = () => {
+  const handleCloseUserMenu = (event) => {
     setAnchorElUser(null);
   };
 
@@ -125,6 +127,11 @@ function NavBar() {
             ))}
           </Box>
 
+          <Box sx={{ flexGrow: 0, marginRight: 2 }}>
+            <IconButton onClick={props.toggleTheme} sx={{ p: 0 }}>
+              {(props.curTheme === 'dark') ? <Brightness4Icon color='white'/> : <Brightness7Icon/>}
+            </IconButton>
+          </Box>
           <Box sx={{ flexGrow: 0 }}>
             <Tooltip title="Open settings">
               <IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
