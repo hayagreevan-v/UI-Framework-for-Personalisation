@@ -9,24 +9,6 @@ import Card from '../components/card.component.jsx';
 import axios from 'axios';
 import "../res/home.css";
 
-// const Theme = createTheme({
-//   mode: '',
-//   palette: {
-//     primary: {
-//       light: '#757ce8',
-//       main: '#3f50b5',
-//       dark: '#002884',
-//       contrastText: '#fff',
-//     },
-//     secondary: {
-//       light: '#ff7961',
-//       main: '#f44336',
-//       dark: '#ba000d',
-//       contrastText: '#000',
-//     }
-//   }
-// });
-
 function Home() {
 
   const [theme, setTheme] = React.useState(
