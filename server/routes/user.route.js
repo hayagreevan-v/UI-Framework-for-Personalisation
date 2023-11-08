@@ -20,20 +20,6 @@ const router = express.Router();
 router.post('/signup', async (req, res) => {
     try {
         req.body.password = await bcrypt.hash(req.body.password, 10);
-        console.log(JSON.stringify({
-            pan: req.body.pan,
-            aadhar: req.body.aadhar,
-            dob: req.body.dob,
-            address: req.body.address,
-            phone: req.body.phone
-        }));
-        req.body.checksum = crypto.createHash('sha256').update( JSON.stringify({
-            pan: req.body.pan,
-            aadhar: req.body.aadhar,
-            dob: req.body.dob,
-            address: req.body.address,
-            phone: req.body.phone
-        })).digest('hex');
         const newUser = await user.create(req.body);
         
         newUser.save().then(() => console.log("User added"));
@@ -44,24 +30,24 @@ router.post('/signup', async (req, res) => {
     }
 });
 
-router.post('/qrcode', async (req, res) => {
-    const user_detail = await user.findOne({ email: req.body.email });
-    if (user_detail.secret.ascii === null) {
-        qrcode.toDataURL(secret.otpauth_url, async function(err, data){
-            await user.updateOne(
-                { email: req.body.email }, 
-                { secret: {
-                    ascii: secret.ascii,
-                    otpauth_url: data
-                }});
-            sendmail_qr(req.body.email, data);
-            res.status(200).json("Mail Sent");
-        });
-    } else {
-        sendmail_qr(req.body.email, user_detail.secret.otpauth_url);
-        res.status(200).json("Mail Sent");
-    }
-});
+// router.post('/qrcode', async (req, res) => {
+//     const user_detail = await user.findOne({ email: req.body.email });
+//     if (user_detail.secret.ascii === null) {
+//         qrcode.toDataURL(secret.otpauth_url, async function(err, data){
+//             await user.updateOne(
+//                 { email: req.body.email }, 
+//                 { secret: {
+//                     ascii: secret.ascii,
+//                     otpauth_url: data
+//                 }});
+//             sendmail_qr(req.body.email, data);
+//             res.status(200).json("Mail Sent");
+//         });
+//     } else {
+//         sendmail_qr(req.body.email, user_detail.secret.otpauth_url);
+//         res.status(200).json("Mail Sent");
+//     }
+// });
 
 /* LOGIN & AUTHENTICATION */
 router.post('/login', async (req, res) => {
@@ -73,13 +59,6 @@ router.post('/login', async (req, res) => {
 
             
             if (valid) {
-                const verified= speakeasy.totp.verify({
-                    secret: user_detail.secret.ascii,
-                    encoding: 'ascii',
-                    token: req.body.totp
-                });
-
-                if(verified) {
                     const token = createToken({ 
                         email: user_detail.email
                     });
@@ -87,13 +66,8 @@ router.post('/login', async (req, res) => {
                     res.status(200).json({
                         token: token
                     });
-                } else {
-                    res.cookie('jwt', '', { httpOnly: true, maxAge: 1 });
-                    res.status(401).json({
-                        error: "Invalid OTP"
-                    });
-                }
-            } else {
+                } 
+             else {
                 res.status(401).json({
                     message: "Invalid Password"
                 });
@@ -138,71 +112,74 @@ router.post('/login', async (req, res) => {
 //         });
 //     }
 // });
+
 /* END : LOGIN & AUTHENTICATION */
-const multerStorage = multer.diskStorage({
-    destination: (req, file, cb) => {
-      cb(null, "Docs");
-    },
-    filename: (req, file, cb) => {
-      const ext = file.mimetype.split("/")[1];
-      cb(null, `${file.filename}-${Date.now()}.${ext}`);
-    },
-  });
 
-  const upload = multer({
-    storage: multerStorage,
-  });
 
-router.post('/formupdate', upload.single("image"), isLoggedIn, async(req,res)=>{
-    const file = req.file;
-    console.log(req.body);
-    const watermarkText = "This is Confidential";
-    const opacity=0.5;
-    try {
-        // Load the uploaded PDF document
-        const existingPdfBuffer = await fs.readFile(file.path);
-        const pdfDoc = await PDFDocument.load(existingPdfBuffer);
+// const multerStorage = multer.diskStorage({
+//     destination: (req, file, cb) => {
+//       cb(null, "Docs");
+//     },
+//     filename: (req, file, cb) => {
+//       const ext = file.mimetype.split("/")[1];
+//       cb(null, `${file.filename}-${Date.now()}.${ext}`);
+//     },
+//   });
+
+//   const upload = multer({
+//     storage: multerStorage,
+//   });
+
+// router.post('/formupdate', upload.single("image"), isLoggedIn, async(req,res)=>{
+//     const file = req.file;
+//     console.log(req.body);
+//     const watermarkText = "This is Confidential";
+//     const opacity=0.5;
+//     try {
+//         // Load the uploaded PDF document
+//         const existingPdfBuffer = await fs.readFile(file.path);
+//         const pdfDoc = await PDFDocument.load(existingPdfBuffer);
     
-        // Get the first page of the PDF
-        const [page] = pdfDoc.getPages();
+//         // Get the first page of the PDF
+//         const [page] = pdfDoc.getPages();
     
-        // Calculate coordinates for the center of the page
-        const { width, height } = page.getSize();
-        const textSize = 20; // Adjust text size as needed
-        const textWidth = textSize * watermarkText.length;
-        const textHeight = textSize;
-        const x = (width - textWidth);
-        const y = (height - textHeight);
+//         // Calculate coordinates for the center of the page
+//         const { width, height } = page.getSize();
+//         const textSize = 20; // Adjust text size as needed
+//         const textWidth = textSize * watermarkText.length;
+//         const textHeight = textSize;
+//         const x = (width - textWidth);
+//         const y = (height - textHeight);
     
-        // Create a color with an alpha channel (opacity)
-        const color = rgb(0, 0, 0);
-        color.a = 1 - opacity; // Invert the opacity value
+//         // Create a color with an alpha channel (opacity)
+//         const color = rgb(0, 0, 0);
+//         color.a = 1 - opacity; // Invert the opacity value
     
-        // Add the transparent watermark text at the calculated center coordinates
-        page.drawText(watermarkText, {
-          x,
-          y,
-          size: textSize,
-          color,
-        });
+//         // Add the transparent watermark text at the calculated center coordinates
+//         page.drawText(watermarkText, {
+//           x,
+//           y,
+//           size: textSize,
+//           color,
+//         });
     
-        // Serialize the modified PDF document
-        const modifiedPdfBuffer = await pdfDoc.save();
+//         // Serialize the modified PDF document
+//         const modifiedPdfBuffer = await pdfDoc.save();
     
-        // Save the modified PDF back to the storage destination (Docs directory)
-        await fs.writeFile(file.path, modifiedPdfBuffer);
+//         // Save the modified PDF back to the storage destination (Docs directory)
+//         await fs.writeFile(file.path, modifiedPdfBuffer);
     
-        console.log('PDF with transparent watermark added at the center and saved successfully.');
-        res.status(200).send('PDF with transparent watermark saved.');
-      } catch (err) {
-        console.error(err);
-        res.status(500).send('Error processing the PDF.');
-      }
-    console.log(file);
-    const newImage = await user.updateOne({email:req.user.email},{
-        image:req.file.filename
-    })
-})
+//         console.log('PDF with transparent watermark added at the center and saved successfully.');
+//         res.status(200).send('PDF with transparent watermark saved.');
+//       } catch (err) {
+//         console.error(err);
+//         res.status(500).send('Error processing the PDF.');
+//       }
+//     console.log(file);
+//     const newImage = await user.updateOne({email:req.user.email},{
+//         image:req.file.filename
+//     })
+// })
 
 router.get('/get-details', isLoggedIn, async (req, res) => {
     const user_detail = await user.findOne({ email: req.user.email })
@@ -212,24 +189,10 @@ router.get('/get-details', isLoggedIn, async (req, res) => {
                                         __v: 0
                                     });
     console.log(user_detail);
-    if (user_detail) {
-        const checksum = crypto.createHash('sha256').update( JSON.stringify({
-            pan: user_detail.pan,
-            aadhar: user_detail.aadhar,
-            dob: user_detail.dob,
-            address: user_detail.address,
-            phone: user_detail.phone
-        })).digest('hex');
-        console.log(checksum, user_detail.checksum);
-
-        if(checksum === user_detail.checksum) {
+    if (user_detail){
             res.status(200).json(user_detail);
-        } else {
-            res.status(400).json({ 
-                error: "Checksum mismatch"
-            });
-        }
-    } else { 
+        } 
+    else { 
         res.status(400).json({ 
             error: "User not found"
         });

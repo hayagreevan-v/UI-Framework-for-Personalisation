@@ -7,6 +7,7 @@ const cookieParser = require("cookie-parser");
 const bodyParser = require("body-parser");
 const userRouter = require("./routes/user.route.js");
 const logoutRouter = require("./routes/logout.route.js");
+const preference = require("./routes/preference.route.js");
 
 dotenv.config();
 
@@ -16,7 +17,7 @@ const port = process.env.PORT;
 app.use(bodyParser.urlencoded({extended:true}));
 app.use(cors({
     credentials: true, 
-    origin: [process.env.CORS_ACCEPTED_ORIGIN_1]
+    origin: [process.env.CORS_ACCEPTED_ORIGIN_1,"http://192.168.145.224:3000"]
 }));
 app.use(express.json());
 app.use(morgan("tiny"));
@@ -44,3 +45,5 @@ app.get('/', (req, res) => {
 
 app.use("/user", userRouter);
 app.use("/logout", logoutRouter);
+app.use('/preference',preference);
+
