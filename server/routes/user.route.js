@@ -3,16 +3,13 @@ const bcrypt = require('bcryptjs');
 const qrcode = require('qrcode');
 const speakeasy = require('speakeasy');
 const crypto = require('crypto');
-const multer = require('multer');
 const { createToken, comparePassword, maxAge, generateOTP, checkEmail } = require("../modules/jwt-auth.modules.js");
 const isLoggedIn = require("../middleware/isLoggedIn.middleware.js");
 const user = require("../models/user.model.js");
-const { sendmail , sendmail_qr} = require("../modules/email.module.js");
-const otp = require("../models/otp.model.js");
-const secret = require("../modules/totp.module.js");
+
+
 const fs = require('fs').promises;
-const { PDFDocument, rgb } = require('pdf-lib');
-const Jimp = require('jimp');
+
 
 const router = express.Router();
 
@@ -198,94 +195,94 @@ router.get('/get-details', isLoggedIn, async (req, res) => {
     }
 });
 
-router.post('/forgot-password', async (req, res) => {
-    const otpDetail = await otp.findOne({ email: req.body.email });
-    if(!otpDetail){
-        const user_detail = await user.findOne({ email: req.body.email });
-        if (user_detail) {        
-            const token = createToken({ 
-                email: user_detail.email,
-                hash: await bcrypt.hash(user_detail.email, 10)
-            });
-            const otp_num = generateOTP();
-            const newOtp = await otp.create({
-                email: user_detail.email,
-                otp: otp_num,
-                token: token
-            });
-            newOtp.save().then(() => {
-                sendmail(req.body.email, otp_num)            
-                res.status(200).json({ message: "Email sent" });
-            });
+// router.post('/forgot-password', async (req, res) => {
+//     const otpDetail = await otp.findOne({ email: req.body.email });
+//     if(!otpDetail){
+//         const user_detail = await user.findOne({ email: req.body.email });
+//         if (user_detail) {        
+//             const token = createToken({ 
+//                 email: user_detail.email,
+//                 hash: await bcrypt.hash(user_detail.email, 10)
+//             });
+//             const otp_num = generateOTP();
+//             const newOtp = await otp.create({
+//                 email: user_detail.email,
+//                 otp: otp_num,
+//                 token: token
+//             });
+//             newOtp.save().then(() => {
+//                 sendmail(req.body.email, otp_num)            
+//                 res.status(200).json({ message: "Email sent" });
+//             });
 
-            } else {
-                res.status(404).json({ 
-                    error: "User not found"
-                });
-            }
-    } else {
-        res.status(429).json({ 
-            error: "OTP already sent"
-        });
-    }
+//             } else {
+//                 res.status(404).json({ 
+//                     error: "User not found"
+//                 });
+//             }
+//     } else {
+//         res.status(429).json({ 
+//             error: "OTP already sent"
+//         });
+//     }
     
-});
+// });
 
-router.post('/reset-password', async (req, res) => {
-    const otp_detail = await otp.findOne({ email: req.body.email })
-                                    .select({
-                                        otp: 1,
-                                        token: 1,
-                                        _id: 0
-                                    });
-    if (otp) {
-        if (req.body.otp == otp_detail.otp) {
-            const {auth, email} = await checkEmail(otp_detail.token);
-            if (auth) {
-                if (email == req.body.email) {
-                    if (req.body.password == req.body.confirmpassword) {
-                        user.updateOne(
-                            { email: req.body.email },
-                            { password: await bcrypt.hash(req.body.password, 10) }
-                        ).then(() => {
-                            res.status(200).json({ message: "Password changed" });
-                        });
-                    } else {
-                        res.status(400).json({ error: "Passwords do not match" });
-                    }
-                } else {
-                    res.status(400).json({ error: "Emails do not match" });
-                }
-            } else {
-                res.status(400).json({ error: "Invalid token" });
-            }
-        } else {
-            res.status(400).json({ error: "Invalid OTP" });
-        }
-    } else {
-        res.status(400).json({ error: "OTP not requested" });
-    }
-});
+// router.post('/reset-password', async (req, res) => {
+//     const otp_detail = await otp.findOne({ email: req.body.email })
+//                                     .select({
+//                                         otp: 1,
+//                                         token: 1,
+//                                         _id: 0
+//                                     });
+//     if (otp) {
+//         if (req.body.otp == otp_detail.otp) {
+//             const {auth, email} = await checkEmail(otp_detail.token);
+//             if (auth) {
+//                 if (email == req.body.email) {
+//                     if (req.body.password == req.body.confirmpassword) {
+//                         user.updateOne(
+//                             { email: req.body.email },
+//                             { password: await bcrypt.hash(req.body.password, 10) }
+//                         ).then(() => {
+//                             res.status(200).json({ message: "Password changed" });
+//                         });
+//                     } else {
+//                         res.status(400).json({ error: "Passwords do not match" });
+//                     }
+//                 } else {
+//                     res.status(400).json({ error: "Emails do not match" });
+//                 }
+//             } else {
+//                 res.status(400).json({ error: "Invalid token" });
+//             }
+//         } else {
+//             res.status(400).json({ error: "Invalid OTP" });
+//         }
+//     } else {
+//         res.status(400).json({ error: "OTP not requested" });
+//     }
+// });
 
-router.get('/get-employee-details', isLoggedIn, async (req, res) => {
-    await user.findOne({ email: req.user.email }).select({ __v: 0 }).then(async (user_detail) => {
-        console.log(user_detail);
-    if (user_detail.role === "HR") {
-        console.log("hi");
-        await user.find({ hrid: user_detail._id }).then(async (employee_details) => {
-            console.log(employee_details);
-            if (employee_details) {
-                res.status(200).json(employee_details);
-            } else {
-                res.status(400).json({ error: "No Employees found" });
-            }
-        });
+// router.get('/get-employee-details', isLoggedIn, async (req, res) => {
+//     await user.findOne({ email: req.user.email }).select({ __v: 0 }).then(async (user_detail) => {
+//         console.log(user_detail);
+//     if (user_detail.role === "HR") {
+//         console.log("hi");
+//         await user.find({ hrid: user_detail._id }).then(async (employee_details) => {
+//             console.log(employee_details);
+//             if (employee_details) {
+//                 res.status(200).json(employee_details);
+//             } else {
+//                 res.status(400).json({ error: "No Employees found" });
+//             }
+//         });
         
-    } else {
-        res.status(400).json({ error: "You are not an HR" });
-    }
-    });
+//     } else {
+//         res.status(400).json({ error: "You are not an HR" });
+//     }
+//     });
     
-});
+// });
 
 module.exports = router;

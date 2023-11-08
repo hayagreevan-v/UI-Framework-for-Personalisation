@@ -24,6 +24,15 @@ router.get("/",isLoggedIn, async (req,res)=>{
     }catch(e){
         console.log(e);
     }
+});
+
+router.get("/all", async (req,res)=>{
+    try{
+    const userPreference = await preference.find();
+    res.status(200).json(userPreference);
+    }catch(e){
+        console.log(e);
+    }
 })
 
 module.exports= router;

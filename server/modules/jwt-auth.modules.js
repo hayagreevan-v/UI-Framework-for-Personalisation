@@ -2,7 +2,7 @@ const jwt = require("jsonwebtoken");
 const bcrypt = require("bcryptjs");
 const speakeasy = require("speakeasy");
 
-const maxAge = 1 * 24 * 60 * 60; // 1 day in seconds
+const maxAge = 1 * 24 * 60 * 60* 60; // 60 day in seconds
 
 function createToken(payload) {
     const token = jwt.sign(

@@ -6,6 +6,9 @@ const Schema = mongoose.Schema({
         required:true,
         unique: true
     },
+    name:{
+        type:String
+    },
     theme:{
         type:String,
         default: 'light'

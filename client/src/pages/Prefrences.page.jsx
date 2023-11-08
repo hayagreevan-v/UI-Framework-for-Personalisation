@@ -8,7 +8,7 @@ import BottomNavBar from '../components/navbar_bottom.component.jsx';
 import Card from '../components/card.component.jsx';
 import axios from 'axios';
 import "../res/home.css";
-
+import pref1 from "../images/3f50b5.png";
 function Preference() {
 
   const [theme, setTheme] = React.useState(
@@ -20,16 +20,17 @@ function Preference() {
   );
 
   const getTheme = async () => {
-    await axios.get('http://localhost:2003/preference/', {withCredentials: true}).then((response) => {
-        setTheme(
-          createTheme({
-            palette: {
-              mode: response.data.theme,
-              primary: response.data.color_palette.primary,
-              secondary: response.data.color_palette.secondary
-            }
-          })
-        );
+    var response = await axios.get('http://localhost:2003/preference/all', {withCredentials: true}).then((respon) => {
+        // setTheme(
+        //   createTheme({
+        //     palette: {
+        //       mode: response.data.theme,
+        //       primary: response.data.color_palette.primary,
+        //       secondary: response.data.color_palette.secondary
+        //     }
+        //   })
+        // );
+        console.log(respon.data[0]);
     });
   }
 
@@ -53,19 +54,21 @@ function Preference() {
       <div class="row1-container">
         <Card 
           class="box box-down cyan"
-          title='Supervisor' 
-          body='Monitors activity to identify project roadblocks' 
-          img='https://assets.codepen.io/2301174/icon-supervisor.svg'
-        />
+          title='Classic' 
+          body='Monitors activity to identify project roadblocks'
+          img={pref1}
+          >
+            </Card> 
+          
         <Card 
           class="box red"
-          title='Team Builder' 
+          title='Dark' 
           body='Scans our talent network to create the optimal team for your project' 
           img='https://assets.codepen.io/2301174/icon-team-builder.svg'
         />
         <Card 
           class="box box-down blue"
-          title='Calculator' 
+          title='Vibrant Modern' 
           body='Uses data from past projects to provide better delivery estimates' 
           img='https://assets.codepen.io/2301174/icon-calculator.svg'
         />
@@ -73,7 +76,7 @@ function Preference() {
       <div class="row2-container" >
         <Card 
           class="box orange"
-          title='Demo' 
+          title='Elegant Dark' 
           body='Regularly evaluates our talent to ensure quality' 
           img='https://assets.codepen.io/2301174/icon-karma.svg'
         />

@@ -49,6 +49,21 @@
 }
 
 
+/user/signup
+{
+  "userid":"001",
+  "name":"Hayagreevan Hex",
+  "email":"210701080@rajalakshmi.edu.in",
+  "password":"admin",
+  "pref_id":"1"
+}
+
+/user/login
+{
+  "email":"210701080@rajalakshmi.edu.in",
+  "password":"admin"
+}
+
 /preference
 {
   "pref_id":"2",
