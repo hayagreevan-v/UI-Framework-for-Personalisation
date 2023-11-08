@@ -7,6 +7,7 @@ import {
 
 import Home from './pages/Home.page.jsx';
 import Login from './pages/Login.page.jsx';
+import Preference from './pages/Prefrences.page.jsx';
 
 function App() {
   return (
@@ -14,7 +15,7 @@ function App() {
       <Routes>
         <Route path='/' element={ <Login navigate={useNavigate}/> }></Route>
         <Route path='/home' element={ <Home navigate={useNavigate}/> }></Route>
-        <Route path='/home' element={ <Home navigate={useNavigate}/> }></Route>
+        <Route path='/preference' element={ <Preference navigate={useNavigate}/> }></Route>
       </Routes>
     </Router>
   );
